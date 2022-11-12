@@ -150,7 +150,7 @@ const event: Event = {
       .replace("telegram", "[telegram](https://t.me/projectarmor)");
 
     embed.setDescription(content);
-    if (!embed.data.image) {
+    if (!embed.data.image && videoUrl !== "") {
       const data = await getLinkPreview(videoUrl);
       if ("images" in data) embed.setImage(data.images[0]);
       embed.setURL("https://discord.js.org/");
