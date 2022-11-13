@@ -26,7 +26,7 @@ const event: Event = {
         .slice(4)}/${ctx.update.channel_post.message_id}`;
       let urlButton: ActionRowBuilder | undefined = undefined;
       let markups: MessageEntity[] = new Array();
-      let hashtagFooter = "";
+      let hashtagFooter = "Telegram •";
       let postContent = "";
       let videoURL = "";
       let postTitle;
@@ -87,7 +87,7 @@ const event: Event = {
 
       hashtags.forEach((hashtag) => (hashtagFooter += ` #${hashtag}`));
       embed.setFooter({
-        text: `Telegram ${hashtagFooter}`,
+        text: hashtagFooter,
         iconURL:
           "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png",
       });
@@ -140,12 +140,10 @@ const event: Event = {
           postContent.indexOf(mention.toString())
         );
 
-      console.log(postContent);
       postContent = postContent.replace(
         "youtube • tiktok • telegram",
         "[youtube](https://www.youtube.com/c/PROJECTARMOR) • [tiktok](https://www.tiktok.com/@project_armor) • [telegram](https://t.me/projectarmor)"
       );
-      console.log(postContent);
 
       embed.setDescription(postContent);
 
