@@ -11,8 +11,9 @@
   "dependencies": {
     "discord.js": "^14.6.0",
     "dotenv": "^16.0.3",
-    "link-preview-js": "^3.0.4",
-    "telegraf": "^4.10.0"
+    "telegraf": "^4.10.0",
+    "ts-open-graph-scraper": "^0.0.2",
+    "twitter-api-v2": "^1.12.9"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",

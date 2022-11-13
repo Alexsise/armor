@@ -3,6 +3,7 @@ import {
   CommandInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import { ETwitterStreamEvent } from "twitter-api-v2";
 
 export interface SlashCommand {
   data: SlashCommandBuilder | any;
@@ -10,7 +11,7 @@ export interface SlashCommand {
 }
 
 export interface Event {
-  name: string;
+  name: string | ETwitterStreamEvent;
   once?: boolean | false;
   execute: (...args: any) => void;
 }
@@ -32,6 +33,7 @@ declare global {
     interface ProcessEnv {
       DISCORDTOKEN: string;
       TELEGRAMTOKEN: string;
+      TWITTERTOKEN: string;
       GUILDID: string;
       DEFAULTCHANNELID: string;
       NEWSCHANNELID: string;

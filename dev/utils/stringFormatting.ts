@@ -23,3 +23,58 @@ export function extract(string: string, options: hashTagOptions) {
 
   return unique ? getUnique(hashtags) : hashtags;
 }
+
+export function restoreMarkup(
+  content: string,
+  markups: MessageEntity[]
+): string {
+  markups?.reverse().forEach((markup) => {
+    let separator;
+    const offset = markup.offset;
+    const length = markup.length;
+    switch (markup.type) {
+      case "italic":
+        separator = "_";
+        break;
+      case "underline":
+        separator = "__";
+        break;
+      case "strikethrough":
+        separator = "~~";
+        break;
+      case "pre":
+        separator = "`";
+        break;
+      case "spoiler":
+        separator = "||";
+        break;
+      case "text_link":
+        const url = markup.url;
+        if (
+          url.includes("t.me") ||
+          url.includes("tiktok") ||
+          url.includes("youtube")
+        )
+          break;
+        content =
+          content.slice(0, offset + length) +
+          `](${url})` +
+          content.slice(offset + length);
+        content = content.slice(0, offset) + "[" + content.slice(offset);
+        break;
+      default:
+        break;
+    }
+
+    content =
+      content.slice(0, offset + length) +
+      (separator ? separator : "") +
+      content.slice(offset + length);
+    content =
+      content.slice(0, offset) +
+      (separator ? separator : "") +
+      content.slice(offset);
+  });
+
+  return content;
+}
