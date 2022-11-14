@@ -1,10 +1,16 @@
 import { MessageEntity, Update } from "telegraf/typings/core/types/typegram";
-import { extract, restoreMarkup } from "../utils/stringFormatting";
+import {
+  downloadImage,
+  extract,
+  restoreMarkup,
+} from "../utils/stringFormatting";
 import { Context, Telegraf } from "telegraf";
 import ogs from "ts-open-graph-scraper";
 import { Event } from "../types";
+import axios from "axios";
 import {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
   Client,
@@ -27,6 +33,7 @@ const event: Event = {
       let urlButton: ActionRowBuilder | undefined = undefined;
       let markups: MessageEntity[] = new Array();
       let hashtagFooter = "Telegram •";
+      let hasOriginalImage = false;
       let postContent = "";
       let videoURL = "";
       let postTitle;
@@ -48,6 +55,7 @@ const event: Event = {
 
       postContent = restoreMarkup(postContent, markups);
 
+      //#region Title Formatting
       if ((postTitle = firstSentenceRegex.exec(postContent)) !== null) {
         embed.setTitle(postTitle[0]);
         if (postTitle[0].includes("](")) {
@@ -66,31 +74,19 @@ const event: Event = {
         }
         postContent = postContent.slice(postTitle[0].length);
       }
-
-      if ("photo" in ctx.update.channel_post) {
-        const photos = ctx.update?.channel_post?.photo;
-        if (photos) {
-          const photo = photos.slice(-1).pop()!.file_id;
-          const url = await telegramBot.telegram.getFileLink(photo);
-          embed.setImage(url.href);
-        }
-      }
+      //#endregion
 
       const hashtags = extract(postContent, {
         symbol: false,
         unique: true,
       });
+
       let channelHashTag =
         hashtags[
           hashtags.findIndex((hashtag) => hashtag.startsWith("armored"))
         ];
 
-      hashtags.forEach((hashtag) => (hashtagFooter += ` #${hashtag}`));
-      embed.setFooter({
-        text: hashtagFooter,
-        iconURL:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png",
-      });
+      //#region Channel Selection
       if (channelHashTag) {
         switch (channelHashTag) {
           case "armorednews":
@@ -124,7 +120,9 @@ const event: Event = {
         ) as TextChannel;
         embed.setColor(0x6722f0);
       }
+      //#endregion
 
+      //#region String Formatting
       hashtags.forEach(
         (hasttag) =>
           (postContent =
@@ -146,8 +144,32 @@ const event: Event = {
       );
 
       embed.setDescription(postContent);
+      hashtags.forEach((hashtag) => (hashtagFooter += ` #${hashtag}`));
+      embed.setFooter({
+        text: hashtagFooter,
+        iconURL:
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1280px-Telegram_2019_Logo.svg.png",
+      });
+      //#endregion
 
-      if (!embed.data.image && videoURL !== "") {
+      if ("photo" in ctx.update.channel_post) {
+        const photos = ctx.update?.channel_post?.photo;
+        if (photos) {
+          const photo = photos.slice(-1).pop()!.file_id;
+          const url = await telegramBot.telegram.getFileLink(photo);
+          const response = await axios({
+            method: "get",
+            url: url.href,
+            responseType: "arraybuffer",
+          });
+          const image = Buffer.from(response.data, "base64");
+          var attachment = new AttachmentBuilder(image, { name: "image.jpg" });
+          embed.setImage(`attachment://${attachment.name}`);
+          hasOriginalImage = true;
+        }
+      }
+
+      if (!hasOriginalImage && videoURL !== "") {
         const data = await ogs(videoURL);
         if (data.ogImage) embed.setImage(data.ogImage[0].url);
         urlButton = new ActionRowBuilder().addComponents(
@@ -157,13 +179,28 @@ const event: Event = {
             .setURL(videoURL)
         );
       }
-      // else {
-      //   embed.setURL(postUrl);
-      // }
 
-      //@ts-ignore
-      if (urlButton) channel.send({ embeds: [embed], components: [urlButton] });
-      else channel.send({ embeds: [embed] });
+      if (hasOriginalImage && urlButton)
+        //@ts-ignore
+        channel.send({
+          embeds: [embed],
+          //@ts-ignore
+          components: [urlButton],
+          //@ts-ignore
+          files: [attachment],
+        });
+      else if (hasOriginalImage && !urlButton)
+        //@ts-ignore
+        channel.send({
+          embeds: [embed],
+          //@ts-ignore
+          files: [attachment],
+        });
+      else if (!hasOriginalImage && urlButton)
+        //@ts-ignore
+        channel.send({ embeds: [embed], components: [urlButton] });
+      else !hasOriginalImage && !urlButton;
+      channel.send({ embeds: [embed] });
     }
   },
 };

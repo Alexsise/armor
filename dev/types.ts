@@ -6,7 +6,7 @@ import {
 import { ETwitterStreamEvent } from "twitter-api-v2";
 
 export interface SlashCommand {
-  data: SlashCommandBuilder | any;
+  data: SlashCommandBuilder;
   execute: (interaction: CommandInteraction) => void;
 }
 
@@ -35,6 +35,7 @@ declare global {
       TELEGRAMTOKEN: string;
       TWITTERTOKEN: string;
       GUILDID: string;
+      CLIENTID: string;
       DEFAULTCHANNELID: string;
       NEWSCHANNELID: string;
       STREAMCHANNELID: string;
