@@ -72,6 +72,7 @@ const event: Event = {
       }
       //#endregion
 
+      console.log(videoURL);
       const hashtags = extract(postContent, {
         symbol: false,
         unique: true,
@@ -130,7 +131,7 @@ const event: Event = {
       const mention = postContent.match(pattern);
       if (mention)
         postContent = postContent.slice(
-          0,
+          0
           postContent.indexOf(mention.toString())
         );
 
@@ -165,8 +166,10 @@ const event: Event = {
         }
       }
 
-      if (!hasOriginalImage && videoURL !== "") {
+      if (!embed.data.image && videoURL !== "") {
         const data = await ogs(videoURL);
+        console.log(100);
+        console.log(data.ogImage);
         if (data.ogImage) embed.setImage(data.ogImage[0].url);
         urlButton = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
@@ -195,8 +198,8 @@ const event: Event = {
       else if (!hasOriginalImage && urlButton)
         //@ts-ignore
         channel.send({ embeds: [embed], components: [urlButton] });
-      else !hasOriginalImage && !urlButton;
-      channel.send({ embeds: [embed] });
+      else if (!hasOriginalImage && !urlButton)
+        channel.send({ embeds: [embed] });
     }
   },
 };

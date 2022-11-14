@@ -28,7 +28,12 @@ export function restoreMarkup(
   content: string,
   markups: MessageEntity[]
 ): string {
+  let prokatilo = 0;
   markups?.reverse().forEach((markup) => {
+    if (prokatilo < 3) {
+      prokatilo++;
+      return;
+    }
     let separator;
     const offset = markup.offset;
     const length = markup.length;
@@ -50,12 +55,12 @@ export function restoreMarkup(
         break;
       case "text_link":
         const url = markup.url;
-        if (
-          url.includes("t.me") ||
-          url.includes("tiktok") ||
-          url.includes("youtube")
-        )
-          break;
+        // if (
+        //   url.includes("t.me") ||
+        //   url.includes("tiktok") ||
+        //   url.includes("youtube")
+        // )
+        //   break;
         content =
           content.slice(0, offset + length) +
           `](${url})` +
