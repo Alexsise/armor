@@ -1,9 +1,5 @@
 import { MessageEntity, Update } from "telegraf/typings/core/types/typegram";
-import {
-  downloadImage,
-  extract,
-  restoreMarkup,
-} from "../utils/stringFormatting";
+import { extract, restoreMarkup } from "../utils/stringFormatting";
 import { Context, Telegraf } from "telegraf";
 import ogs from "ts-open-graph-scraper";
 import { Event } from "../types";
