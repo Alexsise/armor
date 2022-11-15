@@ -131,7 +131,7 @@ const event: Event = {
       const mention = postContent.match(pattern);
       if (mention)
         postContent = postContent.slice(
-          0
+          0,
           postContent.indexOf(mention.toString())
         );
 
