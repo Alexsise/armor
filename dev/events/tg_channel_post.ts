@@ -27,7 +27,7 @@ const event: Event = {
         .toString()
         .slice(4)}/${ctx.update.channel_post.message_id}`;
       let urlButton: ActionRowBuilder | undefined = undefined;
-      let markups: MessageEntity[] = new Array();
+      let markups: MessageEntity[] = [];
       let hashtagFooter = "Telegram •";
       let hasOriginalImage = false;
       let postContent = "";
@@ -59,6 +59,7 @@ const event: Event = {
             embed.data.title!.slice(0, embed.data.title!.indexOf("[")) +
             embed.data.title!.slice(
               embed.data.title!.indexOf("[") + 1,
+
               embed.data.title!.indexOf("](")
             ) +
             embed.data.title!.slice(embed.data.title!.indexOf(")") + 1);
@@ -108,23 +109,23 @@ const event: Event = {
             channel = guild.channels.cache.find(
               (channel) => channel.id === process.env.DEFAULTCHANNELID
             ) as TextChannel;
-            embed.setColor(0x6722f0);
+            embed.setColor(0x171515);
             break;
         }
       } else {
         channel = guild.channels.cache.find(
           (channel) => channel.id === process.env.DEFAULTCHANNELID
         ) as TextChannel;
-        embed.setColor(0x6722f0);
+        embed.setColor(0x171515);
       }
       //#endregion
 
       //#region String Formatting
       hashtags.forEach(
-        (hasttag) =>
+        (hashtag) =>
           (postContent =
-            postContent.slice(0, postContent.indexOf(hasttag) - 3) +
-            postContent.slice(postContent.indexOf(hasttag) + hasttag.length))
+            postContent.slice(0, postContent.indexOf(hashtag) - 3) +
+            postContent.slice(postContent.indexOf(hashtag) + hashtag.length))
       );
 
       var pattern = /\B@[a-z0-9_-]+/gi;

@@ -7,8 +7,7 @@ import * as fs from "fs";
 
 module.exports = (
   telegramBot: Telegraf,
-  discordClient: Client,
-  twitterClient: TwitterApi
+  discordClient: Client
 ) => {
   const commandsDir = join(__dirname, "../commands");
   const commandsFiles = fs.readdirSync(commandsDir);
