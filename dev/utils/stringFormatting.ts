@@ -55,12 +55,6 @@ export function restoreMarkup(
         break;
       case "text_link":
         const url = markup.url;
-        // if (
-        //   url.includes("t.me") ||
-        //   url.includes("tiktok") ||
-        //   url.includes("youtube")
-        // )
-        //   break;
         content =
           content.slice(0, offset + length) +
           `](${url})` +
