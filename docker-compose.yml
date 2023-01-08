@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  projectarmorv2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
